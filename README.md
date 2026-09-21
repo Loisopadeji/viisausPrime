@@ -59,16 +59,16 @@ Python · pandas · NumPy · scikit-learn · statsmodels (SARIMAX) · Plotly · 
 
 ## Files
 
-- `streamlit_app.py` — main app: layout, sidebar navigation, all seven pages
-- `requirements.txt` — dependencies needed to run the app
-- `data/viisaus_operations_data.csv` — the engineered operations dataset
-- `src/config.py` — brand colours, file paths, app constants
-- `src/data.py` — loading and reshaping the dataset, including the monthly staffing panel
-- `src/models.py` — the four models, fully commented, with the leakage rules documented inline
-- `src/charts.py` — branded Plotly chart helpers
-- `assets/revenue_forecast.png` — chart used above
-- `assets/model_comparison.png` — chart used above
-- `DEPLOYMENT_GUIDE.md` — step-by-step deployment walkthrough
+- `streamlit_app.py`; main app: layout, sidebar navigation, all seven pages
+- `requirements.txt` ; dependencies: needed to run the app
+- `data/viisaus_operations_data.csv`; the engineered operations dataset
+- `src/config.py` ; brand colours, file paths, app constants
+- `src/data.py` ; loading and reshaping the dataset, including the monthly staffing panel
+- `src/models.py` ; the four models, fully commented, with the leakage rules documented inline
+- `src/charts.py` ; branded Plotly chart helpers
+- `assets/revenue_forecast.png` ; chart used above
+- `assets/model_comparison.png` ; chart used above
+- `DEPLOYMENT_GUIDE.md` ; step-by-step deployment walkthrough
 
 ## How to Reproduce
 
