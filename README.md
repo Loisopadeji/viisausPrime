@@ -2,7 +2,7 @@
 
 Predictive business intelligence for internal operations, built as a Master's capstone project for Viisaus Technology Limited. Four models forecast revenue and staffing demand, and score every live project and recent client for risk, from the firm's own operational record.
 
-**Live app:** [add your Streamlit link here once deployed]
+**Live app:** [https://viisausprime.streamlit.app/]
 
 ## Dataset
 
