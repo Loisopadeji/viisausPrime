@@ -27,7 +27,8 @@ import pandas as pd
 import streamlit as st
 
 from src.config import (
-    APP_NAME, APP_TAGLINE, CREAM, GRAY, LINE, NAVY, OFFWHITE, RED,
+    APP_NAME, APP_TAGLINE, AUTHOR, CREAM, FONT_STACK, FONT_URL, GITHUB_URL,
+    GRAY, LINE, LINKEDIN_URL, NAVY, OFFWHITE, RED,
 )
 from src.data import (
     format_naira, get_revenue_by_sector, get_staffing_by_sector, load_data,
@@ -43,7 +44,7 @@ from src.charts import forecast_line_chart, grouped_bar, horizontal_bar
 # This must be the FIRST Streamlit command in the file, or Streamlit errors.
 # ===========================================================================
 st.set_page_config(
-    page_title=f"{APP_NAME} | Viisaus Technology",
+    page_title=f"{APP_NAME} | {APP_TAGLINE}",
     page_icon="📊",
     layout="wide",                    # use the full browser width
     initial_sidebar_state="expanded", # sidebar open when the CEO arrives
@@ -52,66 +53,114 @@ st.set_page_config(
 
 # ===========================================================================
 # STYLING
-# Streamlit's default look is grey and generic. This CSS block applies the
-# Viisaus brand so the app matches the presentation.
+# A deliberately minimal look: near-white page, one font family, hairline
+# borders instead of heavy shadows, and red used sparingly as an accent.
+# The font is pulled from Google Fonts with an @import at the top of the CSS.
 # ===========================================================================
 st.markdown(f"""
 <style>
+    @import url('{FONT_URL}');
+
+    /* Apply the brand font to text elements only. Streamlit draws its UI
+       icons with a special icon font, so we must NOT force our font onto every
+       span, or the icons turn into raw words like "keyboard_double_arrow". */
+    html, body, .stApp, p, li, label, h1, h2, h3, h4, input, textarea, button,
+    [data-testid="stMarkdownContainer"], [data-testid="stMetricValue"],
+    [data-testid="stMetricLabel"], [data-testid="stCaptionContainer"] {{
+        font-family: {FONT_STACK} !important;
+    }}
+    [data-testid="stIconMaterial"], span[class*="material-symbols"] {{
+        font-family: "Material Symbols Rounded" !important;
+    }}
     .stApp {{ background-color: {CREAM}; }}
-    section[data-testid="stSidebar"] {{ background-color: {NAVY}; }}
-    section[data-testid="stSidebar"] * {{ color: {CREAM} !important; }}
+    .block-container {{ padding-top: 3.6rem; padding-bottom: 2rem; max-width: 1180px; }}
 
-    h1, h2, h3 {{ color: {NAVY} !important; font-family: Georgia, serif !important; }}
-    p, li, div, span, label {{ color: {GRAY}; }}
+    /* Sidebar: light and quiet, separated by a single hairline */
+    section[data-testid="stSidebar"] {{
+        background-color: #FFFFFF;
+        border-right: 1px solid {LINE};
+    }}
+    section[data-testid="stSidebar"] * {{ color: {GRAY}; }}
 
-    /* The big number cards at the top of pages */
+    h1 {{ color: {NAVY} !important; font-weight: 700 !important; font-size: 2.0rem !important; letter-spacing: -0.3px; }}
+    h2, h3 {{ color: {NAVY} !important; font-weight: 700 !important; }}
+    p, li {{ color: {GRAY}; font-size: 1.02rem; line-height: 1.6; }}
+
+    /* Metric cards: white, hairline border, no heavy shadow */
     div[data-testid="stMetric"] {{
-        background-color: {OFFWHITE};
+        background-color: #FFFFFF;
         border: 1px solid {LINE};
-        border-radius: 8px;
-        padding: 16px 18px;
-        box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-    }}
-    div[data-testid="stMetricValue"] {{
-        color: {RED} !important;
-        font-family: Georgia, serif !important;
-        font-size: 26px !important;
-    }}
-    div[data-testid="stMetricLabel"] {{ color: {GRAY} !important; font-size: 13px !important; }}
-
-    /* A reusable coloured note box */
-    .insight {{
-        background-color: {NAVY};
-        color: {CREAM};
+        border-radius: 10px;
         padding: 14px 18px;
-        border-radius: 8px;
-        font-size: 14px;
-        line-height: 1.55;
-        margin: 8px 0 16px 0;
+    }}
+    div[data-testid="stMetricValue"] {{ color: {NAVY} !important; font-size: 1.7rem !important; font-weight: 700 !important; }}
+    div[data-testid="stMetricLabel"] p {{ color: #8A8D93 !important; font-size: 0.85rem !important;
+        text-transform: uppercase; letter-spacing: 0.6px; }}
+
+    /* Small centred brand line at the top of every page */
+    .brandline {{ text-align: center; color: #8A8D93; font-size: 0.95rem; margin-bottom: 0.2rem; }}
+    .brandline b {{ color: {NAVY}; }}
+    .brandline .dot {{ color: {RED}; padding: 0 6px; }}
+
+    /* The "what this means" note: light panel with a red label */
+    .insight {{
+        background-color: #FFFFFF;
+        border: 1px solid {LINE};
+        border-radius: 10px;
+        padding: 14px 18px;
+        font-size: 1rem;
+        line-height: 1.6;
+        margin: 10px 0 18px 0;
+        color: {GRAY};
     }}
     .insight b {{ color: {RED}; }}
 
+    /* Footer */
     .footer {{
-        color: #C9BEB0;
-        font-size: 11px;
         border-top: 1px solid {LINE};
-        padding-top: 10px;
-        margin-top: 36px;
+        margin-top: 40px;
+        padding-top: 14px;
+        display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+        font-size: 0.85rem; color: #8A8D93;
     }}
+    .footer a {{ color: {NAVY}; text-decoration: none; border-bottom: 1px solid {LINE}; }}
+    .footer a:hover {{ color: {RED}; border-bottom-color: {RED}; }}
+    .footer b {{ color: {NAVY}; }}
+
+    /* About page cards */
+    .about-card {{ background: #FFFFFF; border: 1px solid {LINE}; border-radius: 10px; padding: 18px 20px; height: 100%; }}
+    .about-card h4 {{ margin: 0 0 6px 0; color: {NAVY}; font-size: 1.05rem; }}
+    .about-card p {{ margin: 0; font-size: 0.95rem; }}
+    .tag {{ display: inline-block; border: 1px solid {LINE}; border-radius: 999px; padding: 3px 12px;
+        margin: 0 6px 8px 0; font-size: 0.88rem; color: {GRAY}; background: #FFFFFF; }}
+
     #MainMenu, footer {{ visibility: hidden; }}
 </style>
 """, unsafe_allow_html=True)
 
 
 def insight(text: str):
-    """Shortcut for drawing the navy 'what this means' box."""
+    """Shortcut for drawing the light 'what this means' note."""
     st.markdown(f'<div class="insight">{text}</div>', unsafe_allow_html=True)
 
 
-def page_footer():
-    """The branded footer line, shown at the bottom of every page."""
+def brandline():
+    """The small centred brand line shown above every page title."""
     st.markdown(
-        f'<div class="footer">{APP_NAME} | {APP_TAGLINE}</div>',
+        f'<div class="brandline"><b>{APP_NAME}</b><span class="dot">•</span>{APP_TAGLINE}</div>',
+        unsafe_allow_html=True,
+    )
+
+
+def page_footer():
+    """Footer on every page: product name, author credit with links, and the academic notice."""
+    st.markdown(
+        f'''<div class="footer">
+            <span><b>{APP_NAME}</b> | {APP_TAGLINE}</span>
+            <span>Built by: <b>{AUTHOR}</b> | <a href="{LINKEDIN_URL}" target="_blank">LinkedIn</a>
+            | <a href="{GITHUB_URL}" target="_blank">GitHub</a></span>
+            <span>Strictly confidential, for academic use only.</span>
+        </div>''',
         unsafe_allow_html=True,
     )
 
@@ -120,7 +169,7 @@ def page_footer():
 # SIDEBAR NAVIGATION
 # ===========================================================================
 with st.sidebar:
-    st.markdown(f"## {APP_NAME}")
+    st.markdown(f"### {APP_NAME}")
     st.caption(APP_TAGLINE)
     st.markdown("---")
 
@@ -134,13 +183,19 @@ with st.sidebar:
             "Client Renewal",
             "Data Explorer",
             "Methodology",
+            "About Viisaus",
         ],
         label_visibility="collapsed",
     )
 
     st.markdown("---")
-    st.caption("Viisaus Technology Limited")
+    st.caption(f"{APP_NAME}")
     st.caption("Forecast period: Q1 2026")
+    st.caption(f"Built by {AUTHOR}")
+
+
+# Draw the brand line above every page's title.
+brandline()
 
 
 # Load the dataset once. Because of caching in data.py, this is instant on
@@ -676,4 +731,63 @@ elif page == "Methodology":
     - The risk and renewal scores are prioritisation tools. They rank cases reliably
       but should not be treated as a final verdict on any single project or client.
     """)
+    page_footer()
+
+
+# ===========================================================================
+# PAGE 8: ABOUT VIISAUS
+# A short brand section, plus a clear statement that this is an independent
+# academic project and not an official Viisaus product.
+# ===========================================================================
+elif page == "About Viisaus":
+    st.title("About Viisaus")
+    st.markdown(
+        "*Turning data into impact, enabling smarter decisions that fuel innovation and performance.*"
+    )
+    st.markdown(
+        "Viisaus is a data-driven impact and strategic consulting firm. Its mission is to "
+        "harness data, technology and research to drive development, combining multi-sector "
+        "research, artificial intelligence and policy advisory to help public and private "
+        "institutions scale effectively."
+    )
+
+    st.subheader("Capabilities")
+    c1, c2, c3 = st.columns(3)
+    cards = [
+        ("Strategy & Public Affairs",
+         "Government relations and political intelligence that give clients strategic insight."),
+        ("Research & Green Economy",
+         "Turning data beneath the surface into credible, actionable storytelling intelligence."),
+        ("Technology, Data & AI",
+         "Human-centred technology that bridges strategy with execution to drive transformation."),
+    ]
+    for col, (title, text) in zip([c1, c2, c3], cards):
+        col.markdown(f'<div class="about-card"><h4>{title}</h4><p>{text}</p></div>',
+                     unsafe_allow_html=True)
+
+    st.subheader("Industries served")
+    industries = [
+        "Agriculture", "Climate & Carbon Markets", "Creative Economy & Tourism", "Energy",
+        "Finance & Insurance", "Public Sector", "Technology & Innovation",
+    ]
+    st.markdown("".join(f'<span class="tag">{i}</span>' for i in industries), unsafe_allow_html=True)
+
+    st.subheader("About ViisausPrime")
+    st.markdown(
+        f"**{APP_NAME}** applies the firm's own analytical approach inward: four validated "
+        "models give leadership forward visibility into revenue, staffing capacity, delivery "
+        "risk and client retention, from a single operational dataset."
+    )
+    insight(
+        "<b>Please note:</b> ViisausPrime is an independent academic project developed for the "
+        "Master in Data Science Management at Rome Business School Nigeria. It is not an "
+        "official Viisaus Technology product or website, and the figures shown are for academic "
+        "demonstration only."
+    )
+
+    st.subheader("Built by")
+    st.markdown(
+        f"**{AUTHOR}**  \n"
+        f"[LinkedIn]({LINKEDIN_URL})  ·  [GitHub]({GITHUB_URL})"
+    )
     page_footer()
