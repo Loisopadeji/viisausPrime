@@ -128,7 +128,8 @@ st.markdown(f"""
     .footer b {{ color: {NAVY}; }}
 
     /* About page cards */
-    .about-card {{ background: #FFFFFF; border: 1px solid {LINE}; border-radius: 10px; padding: 18px 20px; height: 100%; }}
+    .about-card {{ background: #FFFFFF; border: 1px solid {LINE}; border-radius: 10px; padding: 18px 20px;
+        min-height: 170px; display: flex; flex-direction: column; justify-content: flex-start; }}
     .about-card h4 {{ margin: 0 0 6px 0; color: {NAVY}; font-size: 1.05rem; }}
     .about-card p {{ margin: 0; font-size: 0.95rem; }}
     .tag {{ display: inline-block; border: 1px solid {LINE}; border-radius: 999px; padding: 3px 12px;
@@ -176,6 +177,7 @@ with st.sidebar:
     page = st.radio(
         "Navigate to",
         [
+            "About Viisaus",
             "Executive Dashboard",
             "Revenue Forecast",
             "Staffing & Capacity",
@@ -183,7 +185,6 @@ with st.sidebar:
             "Client Renewal",
             "Data Explorer",
             "Methodology",
-            "About Viisaus",
         ],
         label_visibility="collapsed",
     )
@@ -774,9 +775,30 @@ elif page == "About Viisaus":
 
     st.subheader("About ViisausPrime")
     st.markdown(
-        f"**{APP_NAME}** applies the firm's own analytical approach inward: four validated "
-        "models give leadership forward visibility into revenue, staffing capacity, delivery "
-        "risk and client retention, from a single operational dataset."
+        f"**{APP_NAME}** applies the firm's own analytical approach inward. Where Viisaus "
+        "turns client data into strategic insight, ViisausPrime turns the firm's own "
+        "operational record, 1,897 projects across 60 months and seven sectors, into forward "
+        "visibility leadership can act on."
+    )
+    st.markdown("Four validated models sit behind the app, each answering one operational question:")
+    d1, d2 = st.columns(2)
+    with d1:
+        st.markdown(
+            '<div class="about-card"><h4>Revenue &amp; Staffing Forecasts</h4>'
+            '<p>A time-series and a machine-learning model forecast next quarter\'s revenue '
+            'and monthly consultant demand, each benchmarked against a simpler alternative '
+            'before being trusted.</p></div>', unsafe_allow_html=True)
+    with d2:
+        st.markdown(
+            '<div class="about-card"><h4>Delivery Risk &amp; Client Renewal</h4>'
+            '<p>Two classification models score every live project for overrun risk and every '
+            'recent client for renewal likelihood, ranking them so attention goes where it '
+            'matters most first.</p></div>', unsafe_allow_html=True)
+    st.markdown(
+        "Every model is validated on data it never saw during training, so the figures in "
+        "this app reflect measured performance rather than assumption. The full method, "
+        "including how leakage is prevented and how each model was benchmarked, is set out "
+        "on the Methodology page."
     )
     insight(
         "<b>Please note:</b> ViisausPrime is an independent academic project developed for the "
