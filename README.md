@@ -6,9 +6,7 @@ Predictive business intelligence for internal operations, built as a Master's ca
 
 ## Dataset
 
-**Engineered for academic use.** [`data/viisaus_operations_data.csv`](data/viisaus_operations_data.csv) Here are two clean options for you:
-
-*Option 1 - Formal:*
+**Engineered for academic use.** [`data/viisaus_operations_data.csv`](data/viisaus_operations_data.csv) 
 
 This dashboard is for academic purposes only. It presents an analysis of 1,897 project records across 60 months (Jan 2021 - Dec 2025), covering 7 sectors and 19 fields.
 
